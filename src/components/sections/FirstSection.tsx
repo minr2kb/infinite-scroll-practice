@@ -1,14 +1,16 @@
 import InfiniteScroll from '../InfiniteScroll';
 import FeedCard from '../FeedCard';
-
-const ITEM_COUNT = 3;
-const FETCH_DELAY = 300;
+import { useAtomValue } from 'jotai';
+import { fetchDelayAtom, paginationLimitAtom } from '@/states';
 
 const FirstSection = () => {
+  const fetchDelay = useAtomValue(fetchDelayAtom);
+  const paginationLimit = useAtomValue(paginationLimitAtom);
+
   const fetchData = async (page: number): Promise<{ content: string }[]> => {
-    await new Promise((resolve) => setTimeout(resolve, FETCH_DELAY));
-    return Array.from({ length: ITEM_COUNT }, (_, index) => ({
-      content: `${(page - 1) * ITEM_COUNT + index + 1}`,
+    await new Promise((resolve) => setTimeout(resolve, fetchDelay));
+    return Array.from({ length: paginationLimit }, (_, index) => ({
+      content: `${(page - 1) * paginationLimit + index + 1}`,
     }));
   };
 
