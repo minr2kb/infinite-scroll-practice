@@ -131,9 +131,7 @@ const FeedCardSkeleton = () => {
       </Card.Header>
       <Card.Body gap="2">
         <Skeleton rounded={'md'} aspectRatio={'4/3'} />
-        <Card.Description>
-          <SkeletonText noOfLines={3} />
-        </Card.Description>
+        <SkeletonText noOfLines={3} />
       </Card.Body>
       <Card.Footer>
         <IconButton variant="ghost" size="sm">
