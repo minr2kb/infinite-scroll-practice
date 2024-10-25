@@ -1,6 +1,7 @@
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { Show, Stack } from '@chakra-ui/react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 type InfiniteScrollProps = {
   renderItem: (item: { content: string }, index: number) => JSX.Element;
@@ -15,14 +16,11 @@ const InfiniteScroll = ({
   loader,
   gap = 0,
 }: InfiniteScrollProps) => {
-  const fetchItems = async ({
-    pageParam = 1,
-  }): Promise<{ content: string }[]> => {
-    return await fetchData(pageParam);
-  };
   const { hasNextPage, isFetching, fetchNextPage, data } = useInfiniteQuery({
     queryKey: ['items'],
-    queryFn: fetchItems,
+    queryFn: async ({ pageParam = 1 }): Promise<{ content: string }[]> => {
+      return await fetchData(pageParam);
+    },
     getNextPageParam: (lastPage, pages) => {
       return lastPage.length ? pages.length + 1 : undefined;
     },
@@ -32,25 +30,15 @@ const InfiniteScroll = ({
     initialPageParam: 1,
   });
 
-  const lastItemRef = useRef<HTMLDivElement | null>(null);
+  const { isIntersecting, ref: lastItemRef } = useIntersectionObserver({
+    threshold: 0,
+  });
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasNextPage) {
-        fetchNextPage();
-      }
-    });
-
-    if (lastItemRef.current) {
-      observer.observe(lastItemRef.current);
+    if (isIntersecting && hasNextPage && fetchNextPage) {
+      fetchNextPage();
     }
-
-    return () => {
-      if (lastItemRef.current) {
-        observer.unobserve(lastItemRef.current);
-      }
-    };
-  }, [hasNextPage, fetchNextPage]);
+  }, [isIntersecting, hasNextPage, fetchNextPage]);
 
   return (
     <Stack gap={gap}>
@@ -64,7 +52,7 @@ const InfiniteScroll = ({
         />
       ))}
       {isFetching && loader}
-      <div ref={lastItemRef} />
+      <div ref={lastItemRef as React.MutableRefObject<HTMLDivElement>} />
     </Stack>
   );
 };
@@ -81,30 +69,12 @@ const RenderItems = memo(
     pageIndex: number;
     gap?: string | number;
   }) => {
-    const [isVisible, setIsVisible] = useState(true);
     const [height, setHeight] = useState<number | null>(null);
-    const ref = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            setIsVisible(entry.isIntersecting);
-          });
-        },
-        { threshold: 0 } // Adjust threshold as needed
-      );
-
-      if (ref.current) {
-        observer.observe(ref.current);
-      }
-
-      return () => {
-        if (ref.current) {
-          observer.unobserve(ref.current);
-        }
-      };
-    }, []);
+    const { isIntersecting: isVisible, ref } = useIntersectionObserver({
+      threshold: 0,
+      initialIsIntersecting: true,
+    });
 
     useEffect(() => {
       if (ref.current) {
@@ -116,7 +86,7 @@ const RenderItems = memo(
 
     return (
       <Stack
-        ref={ref}
+        ref={ref as React.MutableRefObject<HTMLDivElement>}
         gap={gap}
         style={{
           height: isVisible ? 'auto' : height ? `${height}px` : '100px',

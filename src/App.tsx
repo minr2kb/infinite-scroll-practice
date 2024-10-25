@@ -23,12 +23,12 @@ const tabs = [
     component: <FirstSection />,
   },
   {
-    label: 'Tab 2',
+    label: 'Finite',
     value: 'tab-2',
     component: <SecondSection count={10} />,
   },
   {
-    label: 'Tab 3',
+    label: 'Empty',
     value: 'tab-3',
     component: <ThirdSection />,
   },
