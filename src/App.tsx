@@ -39,7 +39,7 @@ const tabs = [
 
 function App() {
   return (
-    <Container centerContent bg="Background">
+    <Container centerContent bg="Background" maxW="100vw">
       <Stack gap={4} maxW="lg" w="100%" alignItems="flex-start" p={[2, 4]}>
         <Flex w={'full'} justifyContent={'space-between'} mt={10}>
           <Heading size="4xl">Infinite Scroll</Heading>
