@@ -23,7 +23,9 @@
 
 ## 메인 아이디어
 
-WIP
+- Intersection observer를 활용하여 직접 제작해보자
+- page 단위로 virtualizing을 해주고, 렌더 후 높이를 기억시키자.
+- WIP
 
 ## TODO
 
