@@ -1,7 +1,28 @@
 {
-  "name": "inf-scroll",
+  "name": "infinite-scroll-practice",
   "private": true,
   "version": "0.0.0",
+  "description": "A React application to practice infinite scroll functionality.",
+  "keywords": [
+    "react",
+    "infinite-scroll",
+    "chakra-ui",
+    "typescript"
+  ],
+  "author": {
+    "name": "Kyungbae Min",
+    "email": "kbmin1129@gmail.com",
+    "url": "https://github.com/minr2kb"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minr2kb/infinite-scroll-practice.git"
+  },
+  "bugs": {
+    "url": "https://github.com/minr2kb/infinite-scroll-practice/issues"
+  },
+  "homepage": "https://github.com/minr2kb/infinite-scroll-practice#readme",
   "type": "module",
   "scripts": {
     "dev": "vite",
