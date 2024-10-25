@@ -15,7 +15,6 @@ import FirstSection from '@/components/sections/FirstSection';
 import SecondSection from '@/components/sections/SecondSection';
 import ThirdSection from '@/components/sections/ThirdSection';
 import { BiArrowToTop } from 'react-icons/bi';
-import { Slider } from './components/ui/slider';
 
 const tabs = [
   {

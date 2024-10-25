@@ -25,6 +25,14 @@
 
 WIP
 
+## TODO
+
+- useInfiniteScroll 분리
+- data fetch 관련 변수 입력 받기
+- 서로 다른 높이의 카드
+- 탭 내의 스크롤 위치 기억하기 -> sessionStorage
+- 탭 간 전환시의 스크롤 위치 변경 로직
+
 ## 작성자
 
 - 민경배
