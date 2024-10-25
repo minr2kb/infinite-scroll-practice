@@ -7,20 +7,22 @@ import {
   Separator,
   Tabs,
   Text,
-  VStack,
-  IconButton,
+  Flex,
+  Stack,
+  Status,
 } from '@chakra-ui/react';
 import { ColorModeButton } from '@/components/ui/color-mode';
 import FirstSection from '@/components/sections/FirstSection';
 import SecondSection from '@/components/sections/SecondSection';
 import ThirdSection from '@/components/sections/ThirdSection';
-import { BiArrowToTop } from 'react-icons/bi';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 const tabs = [
   {
     label: 'Virtualized',
     value: 'tab-1',
     component: <FirstSection />,
+    hasNotification: true,
   },
   {
     label: 'Finite',
@@ -31,20 +33,20 @@ const tabs = [
     label: 'Empty',
     value: 'tab-3',
     component: <ThirdSection />,
+    hasNotification: false,
   },
 ];
 
 function App() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <Container centerContent>
-      <VStack gap={4} maxW="lg" w="100%" alignItems="flex-start" p={[2, 4]}>
-        <Heading size="4xl" mt={10}>
-          Infinite Scroll
-        </Heading>
+    <Container centerContent bg="Background">
+      <Stack gap={4} maxW="lg" w="100%" alignItems="flex-start" p={[2, 4]}>
+        <Flex w={'full'} justifyContent={'space-between'} mt={10}>
+          <Heading size="4xl">Infinite Scroll</Heading>
+          <Box>
+            <ColorModeButton variant={'outline'} />
+          </Box>
+        </Flex>
         <Separator />
         <Text>
           <Highlight
@@ -81,6 +83,11 @@ function App() {
                   key={tab.value}
                 >
                   {tab.label}
+                  {tab.hasNotification && (
+                    <Status.Root colorPalette="teal">
+                      <Status.Indicator />
+                    </Status.Root>
+                  )}
                 </Tabs.Trigger>
               )}
             </For>
@@ -93,21 +100,8 @@ function App() {
             )}
           </For>
         </Tabs.Root>
-      </VStack>
-      <Box position="fixed" top={4} right={4}>
-        <ColorModeButton variant={'outline'} />
-      </Box>
-      <IconButton
-        aria-label="Scroll to top"
-        position="fixed"
-        bottom={4}
-        right={4}
-        onClick={scrollToTop}
-        colorScheme="teal"
-        borderRadius="full"
-      >
-        <BiArrowToTop />
-      </IconButton>
+      </Stack>
+      <ScrollToTopButton />
     </Container>
   );
 }

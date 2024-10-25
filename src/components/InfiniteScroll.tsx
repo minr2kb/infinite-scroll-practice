@@ -79,9 +79,9 @@ const RenderItems = memo(
     useEffect(() => {
       if (ref.current) {
         const height = ref.current.clientHeight;
-        console.log('height', height);
         setHeight(height);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [items]);
 
     return (
