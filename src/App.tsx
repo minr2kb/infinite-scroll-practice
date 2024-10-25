@@ -15,6 +15,7 @@ import FirstSection from '@/components/sections/FirstSection';
 import SecondSection from '@/components/sections/SecondSection';
 import ThirdSection from '@/components/sections/ThirdSection';
 import { BiArrowToTop } from 'react-icons/bi';
+import { Slider } from './components/ui/slider';
 
 const tabs = [
   {
@@ -63,7 +64,15 @@ function App() {
           w={'full'}
           mt={10}
         >
-          <Tabs.List>
+          <Tabs.List
+            css={{
+              position: 'sticky',
+              top: 0,
+              left: 0,
+              zIndex: 1,
+              bgColor: 'Background',
+            }}
+          >
             <For each={tabs}>
               {(tab) => (
                 <Tabs.Trigger
