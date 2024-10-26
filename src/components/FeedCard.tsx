@@ -8,6 +8,7 @@ import {
   Skeleton,
   AspectRatio,
   Collapsible,
+  Show,
 } from '@chakra-ui/react';
 import { Avatar } from '@/components/ui/avatar';
 import {
@@ -32,11 +33,11 @@ interface FeedCardProps {
 const FeedCard = memo(
   ({
     loading = false,
-    avatarSrc = 'https://images.unsplash.com/photo-1511806754518-53bada35f930',
-    username = 'Kyungbae Min',
-    userId = '@minr2_kb',
-    imageSrc = 'https://picsum.photos/400/300',
-    description = 'This is the card body. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec odio vel dui euismod fermentum. Curabitur nec odio vel dui euismod fermentum.',
+    avatarSrc,
+    username,
+    userId,
+    imageSrc,
+    description,
   }: FeedCardProps) => {
     const [imageLoading, setImageLoading] = useState(true);
     const [liked, setLiked] = useState(false); // 좋아요 상태 추가
@@ -76,18 +77,20 @@ const FeedCard = memo(
         </Card.Header>
 
         <Card.Body gap="2">
-          <Skeleton loading={imageLoading} rounded={'md'}>
-            <AspectRatio ratio={4 / 3}>
-              <Image
-                src={imageSrc}
-                alt="feed image"
-                rounded={'md'}
-                aspectRatio={'4/3'}
-                onLoad={() => setImageLoading(false)}
-                loading="lazy"
-              />
-            </AspectRatio>
-          </Skeleton>
+          <Show when={!!imageSrc}>
+            <Skeleton loading={imageLoading} rounded={'md'}>
+              <AspectRatio ratio={4 / 3}>
+                <Image
+                  src={imageSrc}
+                  alt="feed image"
+                  rounded={'md'}
+                  aspectRatio={'4/3'}
+                  onLoad={() => setImageLoading(false)}
+                  loading="lazy"
+                />
+              </AspectRatio>
+            </Skeleton>
+          </Show>
 
           <Card.Description lineClamp={3}>{description}</Card.Description>
         </Card.Body>
@@ -105,7 +108,7 @@ const FeedCard = memo(
         <Collapsible.Root unmountOnExit open={showCommentInput}>
           <Collapsible.Content>
             <HStack gap={0}>
-              <Input variant={'subtle'} placeholder="댓글을 입력하세요..." />
+              <Input variant={'subtle'} placeholder="Comment..." />
               <Button variant={'solid'} colorScheme="blue">
                 Reply
               </Button>

@@ -16,6 +16,7 @@ import FirstSection from '@/components/sections/FirstSection';
 import SecondSection from '@/components/sections/SecondSection';
 import ThirdSection from '@/components/sections/ThirdSection';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
+import FourthSection from './components/sections/FourthSection';
 
 const tabs = [
   {
@@ -30,9 +31,15 @@ const tabs = [
     component: <SecondSection />,
   },
   {
-    label: 'Empty',
+    label: 'Dynamic',
     value: 'tab-3',
     component: <ThirdSection />,
+    hasNotification: false,
+  },
+  {
+    label: 'Empty',
+    value: 'tab-4',
+    component: <FourthSection />,
     hasNotification: false,
   },
 ];
@@ -64,6 +71,7 @@ function App() {
           defaultValue={tabs[0].value}
           w={'full'}
           mt={10}
+          size="lg"
         >
           <Tabs.List
             css={{
