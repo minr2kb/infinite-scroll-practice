@@ -1,15 +1,30 @@
-import FeedCard from '@/components/FeedCard';
-import { For, Stack } from '@chakra-ui/react';
+import FeedCard from '../FeedCard';
+import { useAtomValue } from 'jotai';
+import { fetchDelayAtom, paginationLimitAtom } from '@/states';
+import InfiniteScroll from '../InfiniteScroll';
 
-type Props = { count: number };
+const SecondSection = () => {
+  const fetchDelay = useAtomValue(fetchDelayAtom);
+  const paginationLimit = useAtomValue(paginationLimitAtom);
 
-const SecondSection = ({ count = 10 }: Props) => {
+  const fetchData = async (page: number): Promise<{ content: string }[]> => {
+    await new Promise((resolve) => setTimeout(resolve, fetchDelay));
+    return Array.from({ length: paginationLimit }, (_, index) => ({
+      content: `${(page - 1) * paginationLimit + index + 1}`,
+    }));
+  };
+
+  const renderItem = (item: { content: string }, index: number) => {
+    return <FeedCard key={index} username={`Virtualized ${item.content}`} />;
+  };
+
   return (
-    <Stack gap="4" direction="row" wrap="wrap">
-      <For each={Array.from({ length: count }, (_, index) => index)}>
-        {(_, index) => <FeedCard key={index} />}
-      </For>
-    </Stack>
+    <InfiniteScroll
+      renderItem={renderItem}
+      fetchData={fetchData}
+      gap={4}
+      loader={<FeedCard loading />}
+    />
   );
 };
 

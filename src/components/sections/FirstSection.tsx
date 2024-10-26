@@ -1,7 +1,7 @@
-import InfiniteScroll from '../InfiniteScroll';
 import FeedCard from '../FeedCard';
 import { useAtomValue } from 'jotai';
 import { fetchDelayAtom, paginationLimitAtom } from '@/states';
+import VirtualizedInfiniteScroll from '../VirtualizedInfiniteScroll';
 
 const FirstSection = () => {
   const fetchDelay = useAtomValue(fetchDelayAtom);
@@ -15,11 +15,11 @@ const FirstSection = () => {
   };
 
   const renderItem = (item: { content: string }, index: number) => {
-    return <FeedCard key={index} username={`User ${item.content}`} />;
+    return <FeedCard key={index} username={`Virtualized ${item.content}`} />;
   };
 
   return (
-    <InfiniteScroll
+    <VirtualizedInfiniteScroll
       renderItem={renderItem}
       fetchData={fetchData}
       gap={4}

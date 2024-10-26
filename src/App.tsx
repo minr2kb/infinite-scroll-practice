@@ -25,9 +25,9 @@ const tabs = [
     hasNotification: true,
   },
   {
-    label: 'Finite',
+    label: 'Normal',
     value: 'tab-2',
-    component: <SecondSection count={10} />,
+    component: <SecondSection />,
   },
   {
     label: 'Empty',

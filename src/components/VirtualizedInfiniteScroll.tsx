@@ -1,21 +1,21 @@
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { Stack } from '@chakra-ui/react';
+import { Box, Show, Stack } from '@chakra-ui/react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 
-type InfiniteScrollProps = {
+type VirtualizedInfiniteScrollProps = {
   renderItem: (item: { content: string }, index: number) => JSX.Element;
   fetchData: (page: number) => Promise<{ content: string }[]>;
   loader?: JSX.Element;
   gap?: string | number;
 };
 
-const InfiniteScroll = ({
+const VirtualizedInfiniteScroll = ({
   renderItem,
   fetchData,
   loader,
   gap = 0,
-}: InfiniteScrollProps) => {
+}: VirtualizedInfiniteScrollProps) => {
   const { hasNextPage, isFetching, fetchNextPage, data } = useInfiniteQuery({
     queryKey: ['items'],
     queryFn: async ({ pageParam = 1 }): Promise<{ content: string }[]> => {
@@ -71,10 +71,42 @@ const RenderItems = memo(
   }) => {
     return (
       <Stack gap={gap}>
-        {items.map((item, index) => renderItem(item, pageIndex * 10 + index))}
+        {items.map((item, index) => (
+          <VirtualizedItemWrapper key={index}>
+            {renderItem(item, pageIndex * 10 + index)}
+          </VirtualizedItemWrapper>
+        ))}
       </Stack>
     );
   }
 );
 
-export default InfiniteScroll;
+const VirtualizedItemWrapper = memo(
+  ({ children }: { children: React.ReactNode }) => {
+    const [height, setHeight] = useState<number | null>(null);
+
+    const { isIntersecting: isVisible, ref } = useIntersectionObserver({
+      threshold: 0,
+      initialIsIntersecting: true,
+    });
+
+    useEffect(() => {
+      if (ref.current) {
+        const height = ref.current.clientHeight;
+        setHeight(height);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ref.current]);
+
+    return (
+      <Box
+        ref={ref as React.MutableRefObject<HTMLDivElement>}
+        h={isVisible ? 'auto' : height ? `${height}px` : '400px'}
+      >
+        <Show when={isVisible}>{children}</Show>
+      </Box>
+    );
+  }
+);
+
+export default VirtualizedInfiniteScroll;
