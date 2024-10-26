@@ -8,6 +8,7 @@ type VirtualizedInfiniteScrollProps = {
   fetchData: (page: number) => Promise<{ content: string }[]>;
   loader?: JSX.Element;
   gap?: string | number;
+  estimatedItemHeight?: number;
 };
 
 const VirtualizedInfiniteScroll = ({
@@ -15,6 +16,7 @@ const VirtualizedInfiniteScroll = ({
   fetchData,
   loader,
   gap = 0,
+  estimatedItemHeight = 400,
 }: VirtualizedInfiniteScrollProps) => {
   const { hasNextPage, isFetching, fetchNextPage, data } = useInfiniteQuery({
     queryKey: ['items'],
@@ -49,6 +51,7 @@ const VirtualizedInfiniteScroll = ({
           renderItem={renderItem}
           pageIndex={pageIndex}
           gap={gap}
+          estimatedItemHeight={estimatedItemHeight}
         />
       ))}
       {isFetching && loader}
@@ -63,16 +66,21 @@ const RenderItems = memo(
     renderItem,
     pageIndex,
     gap = 0,
+    estimatedItemHeight,
   }: {
     items: { content: string }[];
     renderItem: (item: { content: string }, index: number) => JSX.Element;
     pageIndex: number;
     gap?: string | number;
+    estimatedItemHeight?: number;
   }) => {
     return (
       <Stack gap={gap}>
         {items.map((item, index) => (
-          <VirtualizedItemWrapper key={index}>
+          <VirtualizedItemWrapper
+            key={index}
+            estimatedItemHeight={estimatedItemHeight}
+          >
             {renderItem(item, pageIndex * 10 + index)}
           </VirtualizedItemWrapper>
         ))}
@@ -82,7 +90,13 @@ const RenderItems = memo(
 );
 
 const VirtualizedItemWrapper = memo(
-  ({ children }: { children: React.ReactNode }) => {
+  ({
+    children,
+    estimatedItemHeight,
+  }: {
+    children: React.ReactNode;
+    estimatedItemHeight?: number;
+  }) => {
     const [height, setHeight] = useState<number | null>(null);
 
     const { isIntersecting: isVisible, ref } = useIntersectionObserver({
@@ -101,7 +115,13 @@ const VirtualizedItemWrapper = memo(
     return (
       <Box
         ref={ref as React.MutableRefObject<HTMLDivElement>}
-        h={isVisible ? 'auto' : height ? `${height}px` : '400px'}
+        h={
+          isVisible
+            ? 'auto'
+            : height
+              ? `${height}px`
+              : `${estimatedItemHeight}px`
+        }
       >
         <Show when={isVisible}>{children}</Show>
       </Box>
