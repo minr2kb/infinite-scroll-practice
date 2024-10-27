@@ -43,7 +43,7 @@ const InfiniteScroll = ({
   return (
     <Stack gap={gap}>
       {data?.pages.map((page, pageIndex) => (
-        <RenderItems
+        <PageItems
           key={pageIndex}
           items={page}
           renderItem={renderItem}
@@ -57,7 +57,7 @@ const InfiniteScroll = ({
   );
 };
 
-const RenderItems = memo(
+const PageItems = memo(
   ({
     items,
     renderItem,

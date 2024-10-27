@@ -28,11 +28,17 @@ const FirstSection = () => {
   };
 
   return (
-    <VirtualizedInfiniteScroll
+    <VirtualizedInfiniteScroll<{ content: string }>
       renderItem={renderItem}
       fetchData={fetchData}
       gap={4}
-      loader={<FeedCard loading />}
+      loader={
+        <>
+          <FeedCard loading />
+          <FeedCard loading />
+          <FeedCard loading />
+        </>
+      }
     />
   );
 };

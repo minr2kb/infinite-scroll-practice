@@ -1,26 +1,24 @@
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { Box, Show, Stack } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
 
-type VirtualizedInfiniteScrollProps = {
-  renderItem: (item: { content: string }, index: number) => JSX.Element;
-  fetchData: (page: number) => Promise<{ content: string }[]>;
+type VirtualizedInfiniteScrollProps<T> = {
+  renderItem: (item: T, index: number) => JSX.Element;
+  fetchData: (page: number) => Promise<T[]>;
   loader?: JSX.Element;
   gap?: string | number;
-  estimatedItemHeight?: number;
 };
 
-const VirtualizedInfiniteScroll = ({
+const VirtualizedInfiniteScroll = <T,>({
   renderItem,
   fetchData,
   loader,
   gap = 0,
-  estimatedItemHeight = 400,
-}: VirtualizedInfiniteScrollProps) => {
+}: VirtualizedInfiniteScrollProps<T>) => {
   const { hasNextPage, isFetching, fetchNextPage, data } = useInfiniteQuery({
     queryKey: ['items'],
-    queryFn: async ({ pageParam = 1 }): Promise<{ content: string }[]> => {
+    queryFn: async ({ pageParam = 1 }): Promise<T[]> => {
       return await fetchData(pageParam);
     },
     getNextPageParam: (lastPage, pages) => {
@@ -45,13 +43,12 @@ const VirtualizedInfiniteScroll = ({
   return (
     <Stack gap={gap}>
       {data?.pages.map((page, pageIndex) => (
-        <RenderItems
+        <PageItems
           key={pageIndex}
           items={page}
           renderItem={renderItem}
           pageIndex={pageIndex}
           gap={gap}
-          estimatedItemHeight={estimatedItemHeight}
         />
       ))}
       {isFetching && loader}
@@ -60,73 +57,93 @@ const VirtualizedInfiniteScroll = ({
   );
 };
 
-const RenderItems = memo(
-  ({
+// IntersectionObserver 옵션 개선
+const observerOptions = {
+  root: null,
+  rootMargin: '200px',
+  threshold: 0,
+};
+
+const observerCallbacks = new Map<string, (isIntersecting: boolean) => void>();
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    observerCallbacks.get(entry.target.id)?.(entry.isIntersecting);
+  });
+}, observerOptions);
+
+// PageItems 컴포넌트도 제네릭으로 변경
+const PageItems = memo(
+  <T,>({
     items,
     renderItem,
     pageIndex,
     gap = 0,
-    estimatedItemHeight,
   }: {
-    items: { content: string }[];
-    renderItem: (item: { content: string }, index: number) => JSX.Element;
+    items: T[];
+    renderItem: (item: T, index: number) => JSX.Element;
     pageIndex: number;
     gap?: string | number;
-    estimatedItemHeight?: number;
   }) => {
     return (
       <Stack gap={gap}>
         {items.map((item, index) => (
-          <VirtualizedItemWrapper
-            key={index}
-            estimatedItemHeight={estimatedItemHeight}
-          >
+          <ItemWrapper key={index} index={pageIndex * 10 + index}>
             {renderItem(item, pageIndex * 10 + index)}
-          </VirtualizedItemWrapper>
+          </ItemWrapper>
         ))}
       </Stack>
     );
   }
-);
+) as <T>(props: {
+  items: T[];
+  renderItem: (item: T, index: number) => JSX.Element;
+  pageIndex: number;
+  gap?: string | number;
+}) => JSX.Element;
 
-const VirtualizedItemWrapper = memo(
-  ({
-    children,
-    estimatedItemHeight,
-  }: {
-    children: React.ReactNode;
-    estimatedItemHeight?: number;
-  }) => {
+const estimatedItemHeight = 400;
+
+const ItemWrapper = memo(
+  ({ children, index }: { children: React.ReactNode; index: number }) => {
     const [height, setHeight] = useState<number | null>(null);
-
-    const { isIntersecting: isVisible, ref } = useIntersectionObserver({
-      threshold: 0,
-      initialIsIntersecting: true,
-    });
+    const [isVisible, setIsVisible] = useState(true);
+    const elementRef = useRef<HTMLDivElement>(null);
+    const elementId = `item-${index}`;
 
     useEffect(() => {
-      if (ref.current) {
-        const height = ref.current.clientHeight;
-        setHeight(height);
-      }
+      const element = elementRef.current;
+      if (!element) return;
+
+      const callback = (isIntersecting: boolean) => {
+        setIsVisible(isIntersecting);
+        if (element) {
+          const { clientHeight } = element;
+          if (height !== clientHeight) {
+            setHeight(clientHeight);
+          }
+        }
+      };
+
+      observerCallbacks.set(elementId, callback);
+      observer.observe(element);
+
+      return () => {
+        observer.unobserve(element);
+        observerCallbacks.delete(elementId);
+      };
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ref.current]);
+    }, [elementRef.current]);
 
     return (
       <Box
-        ref={ref as React.MutableRefObject<HTMLDivElement>}
-        h={
-          isVisible
-            ? 'auto'
-            : height
-              ? `${height}px`
-              : `${estimatedItemHeight}px`
-        }
+        ref={elementRef}
+        h={isVisible ? 'auto' : (height ?? estimatedItemHeight)}
       >
-        <Show when={isVisible}>{children}</Show>
+        {isVisible && children}
       </Box>
     );
-  }
+  },
+  (prevProps, nextProps) => prevProps.index === nextProps.index
 );
 
 export default VirtualizedInfiniteScroll;
