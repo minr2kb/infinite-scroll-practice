@@ -12,41 +12,35 @@ import {
   Status,
 } from '@chakra-ui/react';
 import { ColorModeButton } from '@/components/ui/color-mode';
-import FirstSection from '@/components/sections/FirstSection';
-import SecondSection from '@/components/sections/SecondSection';
-import ThirdSection from '@/components/sections/ThirdSection';
+import SelfmadeSection from '@/components/sections/SelfmadeSection';
+// import TestSection from '@/components/sections/TestSection';
+import VirtuosoSection from '@/components/sections/VirtuosoSection';
+import EmptySection from './components/sections/EmptySection';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
-import FourthSection from './components/sections/FourthSection';
 
 const tabs = [
   {
-    label: 'Virtualized',
+    label: 'Selfmade',
     value: 'tab-1',
-    component: <FirstSection />,
-    hasNotification: true,
+    component: <SelfmadeSection />,
   },
   {
-    label: 'Normal',
+    label: 'Virtuoso',
     value: 'tab-2',
-    component: <SecondSection />,
-  },
-  {
-    label: 'Dynamic',
-    value: 'tab-3',
-    component: <ThirdSection />,
+    component: <VirtuosoSection />,
     hasNotification: false,
   },
   {
     label: 'Empty',
-    value: 'tab-4',
-    component: <FourthSection />,
+    value: 'tab-3',
+    component: <EmptySection />,
     hasNotification: false,
   },
 ];
 
 function App() {
   return (
-    <Container centerContent bg="Background" maxW="100vw">
+    <Container centerContent bg="Background" maxW="100vw" minH="100vh">
       <Stack gap={4} maxW="lg" w="100%" alignItems="flex-start" p={[2, 4]}>
         <Flex w={'full'} justifyContent={'space-between'} mt={10}>
           <Heading size="4xl">Infinite Scroll</Heading>

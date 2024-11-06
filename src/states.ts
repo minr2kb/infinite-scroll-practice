@@ -8,4 +8,4 @@ export const paginationLimitAtom = atom(10);
 /**
  * 데이터 가져오는 딜레이(ms)
  */
-export const fetchDelayAtom = atom(0);
+export const fetchDelayAtom = atom(300);

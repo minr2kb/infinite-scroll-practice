@@ -1,9 +1,9 @@
 import FeedCard from '../FeedCard';
 import { useAtomValue } from 'jotai';
 import { fetchDelayAtom, paginationLimitAtom } from '@/states';
-import VirtualizedInfiniteScroll from '../VirtualizedInfiniteScroll';
+import { VirtualizedInfiniteScroll } from '../InfiniteScroll';
 
-const FirstSection = () => {
+const SelfmadeSection = () => {
   const fetchDelay = useAtomValue(fetchDelayAtom);
   const paginationLimit = useAtomValue(paginationLimitAtom);
 
@@ -15,27 +15,31 @@ const FirstSection = () => {
   };
 
   const renderItem = (item: { content: string }, index: number) => {
+    const hasImage = index % 2 === 0;
+    const contentLength = (index % 161) + 10;
+
     return (
       <FeedCard
         key={index}
-        username={`Virtualized ${item.content}`}
+        username={`Dynamic ${item.content}`}
         avatarSrc="https://images.unsplash.com/photo-1511806754518-53bada35f930"
         userId="@minr2_kb"
-        imageSrc="https://picsum.photos/400/300"
-        description="This is the card body. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec odio vel dui euismod fermentum. Curabitur nec odio vel dui euismod fermentum."
+        imageSrc={hasImage ? 'https://picsum.photos/200/300' : undefined}
+        description={'This is the card body. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec odio vel dui euismod fermentum. Curabitur nec odio vel dui euismod fermentum.'.substring(
+          0,
+          contentLength
+        )}
       />
     );
   };
 
   return (
-    <VirtualizedInfiniteScroll<{ content: string }>
+    <VirtualizedInfiniteScroll.V2
       renderItem={renderItem}
       fetchData={fetchData}
       gap={4}
       loader={
         <>
-          <FeedCard loading />
-          <FeedCard loading />
           <FeedCard loading />
         </>
       }
@@ -43,4 +47,4 @@ const FirstSection = () => {
   );
 };
 
-export default FirstSection;
+export default SelfmadeSection;

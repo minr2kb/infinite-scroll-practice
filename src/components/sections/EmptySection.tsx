@@ -1,6 +1,6 @@
 import { EmptyState } from '../ui/empty-state';
 import { BiNoEntry } from 'react-icons/bi';
-const FourthSection = () => {
+const EmptySection = () => {
   return (
     <EmptyState
       title="No Content"
@@ -10,4 +10,4 @@ const FourthSection = () => {
   );
 };
 
-export default FourthSection;
+export default EmptySection;

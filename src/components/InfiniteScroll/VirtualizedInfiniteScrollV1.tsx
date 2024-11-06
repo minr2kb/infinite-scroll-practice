@@ -3,19 +3,19 @@ import { Box, Stack } from '@chakra-ui/react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { memo, useEffect, useState, useRef } from 'react';
 
-type VirtualizedInfiniteScrollProps<T> = {
+type VirtualizedInfiniteScrollV1Props<T> = {
   renderItem: (item: T, index: number) => JSX.Element;
   fetchData: (page: number) => Promise<T[]>;
   loader?: JSX.Element;
   gap?: string | number;
 };
 
-const VirtualizedInfiniteScroll = <T,>({
+const VirtualizedInfiniteScrollV1 = <T,>({
   renderItem,
   fetchData,
   loader,
   gap = 0,
-}: VirtualizedInfiniteScrollProps<T>) => {
+}: VirtualizedInfiniteScrollV1Props<T>) => {
   const { hasNextPage, isFetching, fetchNextPage, data } = useInfiniteQuery({
     queryKey: ['items'],
     queryFn: async ({ pageParam = 1 }): Promise<T[]> => {
@@ -27,6 +27,7 @@ const VirtualizedInfiniteScroll = <T,>({
     getPreviousPageParam: (firstPage, pages) => {
       return firstPage.length ? pages.length - 1 : undefined;
     },
+    select: (data) => data.pages.flatMap((page) => page as T[]),
     initialPageParam: 1,
   });
 
@@ -42,14 +43,10 @@ const VirtualizedInfiniteScroll = <T,>({
 
   return (
     <Stack gap={gap}>
-      {data?.pages.map((page, pageIndex) => (
-        <PageItems
-          key={pageIndex}
-          items={page}
-          renderItem={renderItem}
-          pageIndex={pageIndex}
-          gap={gap}
-        />
+      {data?.map((item, index) => (
+        <ItemWrapper key={index} index={index}>
+          {renderItem(item, index)}
+        </ItemWrapper>
       ))}
       {isFetching && loader}
       <div ref={lastItemRef as React.MutableRefObject<HTMLDivElement>} />
@@ -70,36 +67,6 @@ const observer = new IntersectionObserver((entries) => {
     observerCallbacks.get(entry.target.id)?.(entry.isIntersecting);
   });
 }, observerOptions);
-
-// PageItems 컴포넌트도 제네릭으로 변경
-const PageItems = memo(
-  <T,>({
-    items,
-    renderItem,
-    pageIndex,
-    gap = 0,
-  }: {
-    items: T[];
-    renderItem: (item: T, index: number) => JSX.Element;
-    pageIndex: number;
-    gap?: string | number;
-  }) => {
-    return (
-      <Stack gap={gap}>
-        {items.map((item, index) => (
-          <ItemWrapper key={index} index={pageIndex * 10 + index}>
-            {renderItem(item, pageIndex * 10 + index)}
-          </ItemWrapper>
-        ))}
-      </Stack>
-    );
-  }
-) as <T>(props: {
-  items: T[];
-  renderItem: (item: T, index: number) => JSX.Element;
-  pageIndex: number;
-  gap?: string | number;
-}) => JSX.Element;
 
 const estimatedItemHeight = 400;
 
@@ -137,6 +104,7 @@ const ItemWrapper = memo(
     return (
       <Box
         ref={elementRef}
+        id={elementId}
         h={isVisible ? 'auto' : (height ?? estimatedItemHeight)}
       >
         {isVisible && children}
@@ -146,4 +114,4 @@ const ItemWrapper = memo(
   (prevProps, nextProps) => prevProps.index === nextProps.index
 );
 
-export default VirtualizedInfiniteScroll;
+export default VirtualizedInfiniteScrollV1;
