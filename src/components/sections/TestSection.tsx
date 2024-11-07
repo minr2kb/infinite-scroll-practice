@@ -23,6 +23,9 @@ const TestSection = () => {
         userId="@minr2_kb"
         imageSrc="https://picsum.photos/400/300"
         description="This is the card body. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec odio vel dui euismod fermentum. Curabitur nec odio vel dui euismod fermentum."
+        css={{
+          mb: 4,
+        }}
       />
     );
   };
@@ -35,8 +38,7 @@ const TestSection = () => {
     <VirtualList<{ content: string }>
       data={data}
       renderItem={renderItem}
-      gap={16}
-      overscan={500}
+      overscan={1000}
       //   loader={<FeedCard loading />}
     />
   );

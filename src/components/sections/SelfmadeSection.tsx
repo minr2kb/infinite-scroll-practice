@@ -37,7 +37,6 @@ const SelfmadeSection = () => {
     <VirtualizedInfiniteScroll.V2
       renderItem={renderItem}
       fetchData={fetchData}
-      gap={4}
       loader={
         <>
           <FeedCard loading />

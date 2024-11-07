@@ -8,14 +8,12 @@ type VirtualizedInfiniteScrollV2Props<T> = {
   renderItem: (item: T, index: number) => JSX.Element;
   fetchData: (page: number) => Promise<T[]>;
   loader?: JSX.Element;
-  gap?: number;
 };
 
 const VirtualizedInfiniteScrollV2 = <T,>({
   renderItem,
   fetchData,
   loader,
-  gap = 0,
 }: VirtualizedInfiniteScrollV2Props<T>) => {
   const { hasNextPage, isFetching, fetchNextPage, data } = useInfiniteQuery({
     queryKey: ['items'],
@@ -43,13 +41,13 @@ const VirtualizedInfiniteScrollV2 = <T,>({
   }, [isIntersecting, hasNextPage, fetchNextPage]);
 
   return (
-    <Stack gap={gap}>
+    <Stack gap={0}>
       <VirtualList<T>
         data={data ?? []}
         renderItem={renderItem}
-        gap={gap * 4}
         overscan={1000}
       />
+
       {isFetching && loader}
       <div ref={lastItemRef as React.MutableRefObject<HTMLDivElement>} />
     </Stack>

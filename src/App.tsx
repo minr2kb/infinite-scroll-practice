@@ -13,26 +13,32 @@ import {
 } from '@chakra-ui/react';
 import { ColorModeButton } from '@/components/ui/color-mode';
 import SelfmadeSection from '@/components/sections/SelfmadeSection';
-// import TestSection from '@/components/sections/TestSection';
+import TestSection from '@/components/sections/TestSection';
 import VirtuosoSection from '@/components/sections/VirtuosoSection';
 import EmptySection from './components/sections/EmptySection';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 const tabs = [
   {
-    label: 'Selfmade',
+    label: 'Test',
     value: 'tab-1',
-    component: <SelfmadeSection />,
+    component: <TestSection />,
   },
   {
-    label: 'Virtuoso',
+    label: 'Selfmade',
     value: 'tab-2',
+    component: <SelfmadeSection />,
+  },
+
+  {
+    label: 'Virtuoso',
+    value: 'tab-3',
     component: <VirtuosoSection />,
     hasNotification: false,
   },
   {
     label: 'Empty',
-    value: 'tab-3',
+    value: 'tab-4',
     component: <EmptySection />,
     hasNotification: false,
   },

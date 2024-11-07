@@ -9,6 +9,7 @@ import {
   AspectRatio,
   Collapsible,
   Show,
+  CardRootProps,
 } from '@chakra-ui/react';
 import { Avatar } from '@/components/ui/avatar';
 import {
@@ -31,7 +32,7 @@ interface FeedCardProps {
 }
 
 const FeedCard = memo(
-  forwardRef<HTMLDivElement, FeedCardProps>(
+  forwardRef<HTMLDivElement, FeedCardProps & CardRootProps>(
     (
       {
         loading = false,
@@ -40,7 +41,8 @@ const FeedCard = memo(
         userId,
         imageSrc,
         description,
-      }: FeedCardProps,
+        ...cardRootProps
+      },
       ref
     ) => {
       const [imageLoading, setImageLoading] = useState(true);
@@ -60,7 +62,7 @@ const FeedCard = memo(
       }
 
       return (
-        <Card.Root w="full" ref={ref}>
+        <Card.Root w="full" ref={ref} {...cardRootProps}>
           <Card.Header>
             <HStack gap={3}>
               <Avatar src={avatarSrc} name={username} />
