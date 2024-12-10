@@ -1,4 +1,4 @@
-# Infinite Scroll 연습
+# Infinite Scroll 연습 (WIP)
 
 이 프로젝트는 무한 스크롤 기능을 테스트 하기 위한 React 애플리케이션입니다. 타 라이브러리 비교 및 virtualizer 직접 구현을 목표로 제작되었습니다.
 
