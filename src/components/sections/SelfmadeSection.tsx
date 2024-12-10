@@ -29,6 +29,9 @@ const SelfmadeSection = () => {
           0,
           contentLength
         )}
+        css={{
+          mb: 4,
+        }}
       />
     );
   };
